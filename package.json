@@ -1,0 +1,20 @@
+{
+  "name": "mddisp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "nodemon main.js test"
+  },
+  "author": "Robert Fromm",
+  "license": "ISC",
+  "dependencies": {
+    "chokidar": "^3.3.1",
+    "highlight.js": "^9.17.1",
+    "jquery": "^3.4.1",
+    "jsdom": "^15.2.1",
+    "markdown-it": "^10.0.0",
+    "markdown-it-container": "^2.0.0",
+    "markdown-it-mathjax": "^2.0.0"
+  }
+}

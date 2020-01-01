@@ -1,0 +1,13 @@
+{
+    "heading": "Unbenanntes Dokument",
+    "author": "",
+    "style": "default.css",
+    "pagewidth": 0,
+    "img-src-text": "Quelle: #SRC",
+    "simple-containers": [
+        "task",
+        "example",
+        "overview",
+        "solution"
+    ]
+}
