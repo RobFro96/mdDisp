@@ -1,72 +1,74 @@
 const OPTION_HEADER = "!mdDisp:";
-const TEMPLATE = "templates/template.html";
-const AUTHOR_TAG = '<meta name="author" content="#AUTHOR">';
 
 const markdown_it = require("markdown-it");
 const markdown_it_mathjax = require('markdown-it-mathjax');
 const markdown_it_container = require('markdown-it-container');
+const Util = require("./util");
+const HtmlRenderer = require("./html-renderer");
+const DomRenderer = require("./dom-renderer");
+
+
 const fs = require("fs");
 const hljs = require('highlight.js');
 const default_options = require("./templates/default-options.json")
-const jsdom = require("jsdom");
-const jquery = require('jquery');
 
 var Renderer = function (filename, destination) {
     this.filename = filename;
     this.destination = destination;
-    fs.readFile(filename, "utf8", this.parseFile.bind(this));
 }
 
-Renderer.prototype.parseFile = function (err, data) {
-    this.data = data;
-    let start = this.parseOptions();
-    this.data = this.data.substring(start);
+Renderer.prototype.render = function () {
+    try {
+        this.data = fs.readFileSync(this.filename, "utf8");
+        let firstLine = this.data.split("\n", 1)[0];
 
-    this.md = markdown_it({
-        html: true,
-        xhtmlOut: false,
-        breaks: true,
-        langPrefix: "language-",
-        linkify: false,
-        typographer: false,
-        highlight: function (str, lang) {
-            if (lang && hljs.getLanguage(lang)) {
-                try {
-                    return hljs.highlight(lang, str).value;
-                } catch (__) { }
-            }
-
-            return ''; // use external default escaping
+        if (!firstLine.startsWith(OPTION_HEADER)) {
+            this.options = default_options;
+            return 0;
         }
-    });
 
-    this.md.use(markdown_it_mathjax());
+        let start = this.parseOptions(firstLine);
+        this.data = this.data.substring(start);
 
-    for (container of this.options["simple-containers"]) {
-        this.md.use(markdown_it_container, container);
-    }
+        // Einstellungen
+        this.md = markdown_it({
+            html: true,
+            xhtmlOut: false,
+            breaks: true,
+            langPrefix: "language-",
+            linkify: false,
+            typographer: false,
+            highlight: function (str, lang) {
+                if (lang && hljs.getLanguage(lang)) {
+                    try {
+                        return hljs.highlight(lang, str).value;
+                    } catch (__) { }
+                }
 
-    this.result = this.md.render(this.data);
+                return ''; // use external default escaping
+            }
+        });
 
-    this.createHtml();
+        this.enableMathJax();
+        this.enableContainer();
+        this.enableSpoiler();
+        this.enableLabel();
 
-    this.modifyHtml();
+        let bodyHtml = this.md.render(this.data);
+        let fullHtml = new HtmlRenderer(this.options).render(bodyHtml);
+        let result = new DomRenderer(this.options).render(fullHtml);
 
-    fs.writeFile(this.destination, this.result, "utf8", function () {
-        console.log("ready");
-    });
-}
-
-Renderer.prototype.parseOptions = function () {
-    let firstLine = this.data.split("\n", 1)[0];
-
-    if (!firstLine.startsWith(OPTION_HEADER)) {
-        this.options = default_options;
+        fs.writeFileSync(this.destination, result, "utf8");
+    } catch (e) {
+        console.error(e);
         return 0;
     }
 
+    return 1;
+}
 
-    json = this.fixJson(firstLine.substring(OPTION_HEADER.length).trim("\r"));
+Renderer.prototype.parseOptions = function (firstLine) {
+    json = Util.fixJson(firstLine.substring(OPTION_HEADER.length).trim("\r"));
 
     if (json == null) {
         this.options = default_options;
@@ -78,125 +80,56 @@ Renderer.prototype.parseOptions = function () {
     return firstLine.length;
 }
 
-Renderer.prototype.fixJson = function (string) {
-    // von https://www.quora.com/How-can-I-parse-unquoted-JSON-with-JavaScript
-    try {
-        let crappyJSON = "{" + string + "}";
-        let fixedJSON = crappyJSON.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2": ')
-        return JSON.parse(fixedJSON);
-    } catch (e) {
-        return null;
+Renderer.prototype.enableMathJax = function () {
+    this.md.use(markdown_it_mathjax());
+}
+
+Renderer.prototype.enableContainer = function () {
+    for (container of this.options["simple-containers"]) {
+        this.md.use(markdown_it_container, container);
     }
 }
 
-Renderer.prototype.createHtml = function () {
-    template = fs.readFileSync(TEMPLATE, "utf8");
+Renderer.prototype.enableSpoiler = function () {
+    this.md.use(markdown_it_container, "spoiler", {
+        validate: function (params) {
+            return params.trim().match(/^spoiler\s+(.*)$/);
+        },
 
-    // BODY
-    this.result = template.replace("#BODY", this.result);
+        render: function (tokens, idx) {
+            var m = tokens[idx].info.trim().match(/^spoiler\s+(.*)$/);
 
-    // AUTHOR
-    let authorTag = "";
-    if (this.options["author"]) {
-        authorTag = AUTHOR_TAG.replace("#AUTHOR", this.options["author"]);
-    }
-    this.result = this.result.replace("#AUTHOR_TAG", authorTag)
+            if (tokens[idx].nesting === 1) {
+                // opening tag
+                return '<details><summary>' + this.md.utils.escapeHtml(m[1]) + '</summary>\n';
 
-    // TITLE
-    this.result = this.result.replace("#TITLE", this.options["title"]);
-
-    // CSS
-    let cssTags = "";
-
-    let cssFile = "templates/" + this.options["style"];
-    if (fs.existsSync(cssFile)) {
-        cssTags += "<style>\n" + fs.readFileSync(cssFile, "utf8") + "</style>\n";
-    } else {
-        cssTags += '<link href="' + this.options["style"] + '" rel="stylesheet">';
-    }
-
-    this.result = this.result.replace("#CSS", cssTags);
-}
-
-Renderer.prototype.modifyHtml = function () {
-    let dom = new jsdom.JSDOM(this.result);
-    let $ = jquery(dom.window);
-
-    this.addTitle($);
-    this.setPageWidth($);
-    this.updateImages($);
-
-    this.result = dom.serialize();
-}
-
-Renderer.prototype.addTitle = function ($) {
-    if (this.options["title"]) {
-        $("#md").prepend(
-            $("<h1>").text(this.options["title"])
-        );
-    }
-}
-
-Renderer.prototype.setPageWidth = function ($) {
-    if (this.options["pagewidth"]) {
-        $("#md").css("width", this.options["pagewidth"]);
-    }
-}
-
-Renderer.prototype.updateImages = function ($) {
-    $("#md img").each(function (index, element) {
-        img = $(element);
-        json = this.fixJson($(img).attr("alt"));
-        if (!json) return;
-
-        // Wrap mit div
-        div = $("<div>");
-        div.addClass("md_img_div");
-        img.addClass("md_img");
-
-        // Größe
-        if ("w" in json) {
-            let w = json["w"];
-
-            if (typeof w == "number") {
-                w--;
-                div.css("width", w + "%");
             } else {
-                div.css("width", w);
+                // closing tag
+                return '</details>\n';
             }
-        } else {
-            div.css("width", "100%");
-        }
+        }.bind(this)
+    });
+}
 
-        img.wrap(div);
-        div = img.parent()
+Renderer.prototype.enableLabel = function () {
+    this.md.use(markdown_it_container, "label", {
+        validate: function (params) {
+            return params.trim().match(/^label\s+(.*)$/);
+        },
 
-        // Alt
-        if ("alt" in json) {
-            img.attr("alt", json["alt"]);
+        render: function (tokens, idx) {
+            var m = tokens[idx].info.trim().match(/^label\s+(.*)$/);
 
-            let caption = $("<span>");
-            caption.addClass("md_img_caption");
-            caption.html(json["alt"]);
+            if (tokens[idx].nesting === 1) {
+                // opening tag
+                return '<div class="label">' + this.md.utils.escapeHtml(m[1]) + '\n';
 
-            // Source
-            if ("src" in json) {
-                caption.append("<br>");
-                let source = $("<span>");
-                source.addClass("md_img_caption_src");
-                source.text(this.options["img-src-text"].replace("#SRC", json["src"]));
-                caption.append(source);
+            } else {
+                // closing tag
+                return '</div>\n';
             }
-
-            div.append(caption);
-        } else {
-            img.attr("alt", "");
-        }
-
-        // Modal
-        img.attr("onclick", "img_box(this)");
-
-    }.bind(this));
+        }.bind(this)
+    });
 }
 
 module.exports = Renderer;

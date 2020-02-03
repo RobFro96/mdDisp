@@ -3,11 +3,22 @@
     "author": "",
     "style": "default.css",
     "pagewidth": 0,
-    "img-src-text": "Quelle: #SRC",
+    "img_src_text": "Quelle: #SRC",
     "simple-containers": [
         "task",
         "example",
         "overview",
-        "solution"
-    ]
+        "solution",
+        "no-print"
+    ],
+    "labels": {
+        "fig": "Abbildung",
+        "sec": "Abschnitt",
+        "lst": "Quellcode",
+        "task": "Aufgabe"
+    },
+    "section_depth": 3,
+    "chapter": 0,
+    "autolabel_img": true,
+    "autolabel_heading": true
 }

@@ -4,12 +4,14 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "nodemon main.js test"
+    "test": "nodemon main.js",
+    "start": "node main.js"
   },
   "author": "Robert Fromm",
   "license": "ISC",
   "dependencies": {
     "chokidar": "^3.3.1",
+    "express": "^4.17.1",
     "highlight.js": "^9.17.1",
     "jquery": "^3.4.1",
     "jsdom": "^15.2.1",

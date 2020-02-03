@@ -102,7 +102,6 @@
             "extensions": ["tex2jax.js"],
             "messageStyle": "none",
             "displayAlign": "left",
-            "displayIndent": "2em",
             "tex2jax": {
                 "processEnvironments": false,
                 "processEscapes": true,
@@ -125,6 +124,37 @@
     </script>
 
     #CSS
+
+    <script src="http://localhost:8080/jquery-3.4.1.min.js"></script>
+
+    <script>
+        let lastUpdate = 0;
+
+        $(document).ready(function () {
+            request();
+        });
+
+        function request() {
+            window.setTimeout(request, 1000);
+            $.getJSON("http://localhost:8080/update/", update);
+        }
+
+        function update(res) {
+            let file = window.location.pathname.split("/");
+            console.log(res);
+            file = file[file.length - 1];
+
+            if (!(file in res)) return;
+
+            if (res[file] > lastUpdate) {
+                if (lastUpdate == 0) {
+                    lastUpdate = res[file];
+                } else {
+                    document.location.reload()
+                }
+            }
+        }
+    </script>
 </head>
 
 <body>

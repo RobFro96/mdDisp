@@ -8,12 +8,25 @@
     }
 }
 
+:root {
+    --black: rgb(0,0,0);
+    --gray: rgb(93, 101, 105);
+    --blue: rgb(0,70,153);
+    --lightgray: rgb(190,195,198);
+    --yellow: rgb(255,237,0);
+    --magenta: rgb(229,0,125);
+    --red: rgb(229,48,9);
+    --green: rgb(0,150,78);
+    --cyan: rgb(0,158,227);
+    --darkblue: rgb(2,37,65);
+}
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font-family: "Source Sans Pro", Arial, sans-serif;
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
-    color: #212529;
+    color: var(--black);
     text-align: left;
     padding: 1rem;
 }
@@ -34,13 +47,8 @@ body {
 .md_img_caption {}
 
 .md_img_caption_src {
-    color: #6c757d;
+    color: var(--gray);
     font-size: .8rem;
-}
-
-.MathJax_Display {
-    margin-left: 2em !important;
-    margin-right: 2em !important;
 }
 
 .label {
@@ -48,7 +56,7 @@ body {
 }
 
 span.heading_label {
-    color: #6c757d;
+    color: var(--gray);
     margin-right: .5rem;
 }
 
@@ -56,7 +64,7 @@ details {
     padding: 1.25rem;
     margin-top: 1.25rem;
     margin-bottom: 1.25rem;
-    border: 1px solid #eee;
+    border: 1px solid var(--lightgray);
     border-radius: .25rem;
 }
 
@@ -68,56 +76,41 @@ div.example {
     padding: 1.25rem;
     margin-top: 1.25rem;
     margin-bottom: 1.25rem;
-    border: 1px solid #eee;
+    border: 1px solid var(--lightgray);
     border-left-width: thick;
     border-radius: .25rem;
-    border-left-color: #28a745;
+    border-left-color: var(--green);
 }
 
 div.task {
     padding: 1.25rem;
     margin-top: 1.25rem;
     margin-bottom: 1.25rem;
-    border: 1px solid #eee;
+    border: 1px solid var(--lightgray);
     border-left-width: thick;
     border-radius: .25rem;
-    border-left-color: #ffc107;
+    border-left-color: var(--yellow);
 }
 
 div.overview {
     padding: 1.25rem;
     margin-top: 1.25rem;
     margin-bottom: 1.25rem;
-    border: 1px solid #eee;
+    border: 1px solid var(--lightgray);
     border-left-width: thick;
     border-radius: .25rem;
-    border-left-color: #17a2b8;
+    border-left-color: var(--cyan);
 }
 
 div.solution {
     padding: 1.25rem;
     margin-top: 1.25rem;
     margin-bottom: 1.25rem;
-    border: 1px solid #eee;
+    border: 1px solid var(--lightgray);
     border-left-width: thick;
     border-radius: .25rem;
-    border-left-color: #007bff;
+    border-left-color: var(--blue);
     display: none;
-}
-
-table {
-    margin-top: .25rem;
-    margin-bottom: .25rem;
-    border-collapse: collapse;
-    border-spacing: 0;
-    display: block;
-    width: 100%;
-    word-break: keep-all;
-}
-
-table th, td {
-    border: 1px solid #eee;
-    padding: .2rem .5rem;
 }
 
 p:last-child {
@@ -131,30 +124,28 @@ p {
 
 h1, h2, h3, h4, h5, h6 {
     margin-bottom: .5rem;
-    font-family: inherit;
-    font-weight: bold;
+    font-weight: 800;
     line-height: 1.2;
-    color: inherit;
 }
 
 h1 {
-    font-size: 2.5rem;
-}
-
-h2 {
     font-size: 2rem;
 }
 
-h3 {
-    font-size: 1.75rem;
-}
-
-h4 {
+h2 {
     font-size: 1.5rem;
 }
 
+h3 {
+    font-size: 1.2rem;
+}
+
+h4 {
+    font-size: 1.1rem;
+}
+
 h5 {
-    font-size: 1.25rem;
+    font-size: 1.05rem;
 }
 
 h6 {
@@ -162,14 +153,14 @@ h6 {
 }
 
 a {
-    color: #007bff;
+    color: var(--blue);
     text-decoration: none;
     background-color: transparent;
     -webkit-text-decoration-skip: objects;
 }
 
 a:hover {
-    color: #0056b3;
+    color: var(--blue);
     text-decoration: underline;
 }
 
@@ -178,10 +169,15 @@ code, kbd, pre, samp {
     font-size: 1em;
 }
 
-code:not(class*="language-") {
+code {
+    font-family: "Source Code Pro", 'Courier New', Courier, monospace;
     font-size: 87.5%;
-    color: #e83e8c;
+    color: var(--magenta);
     word-break: break-word;
+}
+
+pre > code {
+    color: var(--black);
 }
 
 pre {
@@ -190,8 +186,7 @@ pre {
     overflow: auto;
     -ms-overflow-style: scrollbar;
     display: block;
-    font-size: 87.5%;
-    color: #212529;
+    color: var(--black);
     background: none;
     text-align: left;
     white-space: pre;
@@ -205,9 +200,24 @@ pre {
     hyphens: none;
     padding: 1.25rem;
     overflow: auto;
-    background: #f8f9fa;
-    border: 1px solid #eee;
+    background: #fff;
+    border: 1px solid var(--lightgray);
     border-radius: .25rem;
+}
+
+table {
+    margin-top: .25rem;
+    margin-bottom: .25rem;
+    border-collapse: collapse;
+    border-spacing: 0;
+    display: block;
+    width: 100%;
+    word-break: keep-all;
+}
+
+table th, td {
+    border: 1px solid var(--lightgray);
+    padding: .2rem .5rem;
 }
 
 /* https://highlightjs.org/ Github Style */
@@ -216,30 +226,30 @@ pre {
     display: block;
     overflow-x: auto;
     padding: .5em;
-    color: #333;
-    background: #f8f8f8
+    color: var(--gray);
+    background: #fff
 }
 
 .hljs-comment, .hljs-quote {
-    color: #998;
+    color: var(--lightgray);
     font-style: italic
 }
 
 .hljs-keyword, .hljs-selector-tag, .hljs-subst {
-    color: #333;
+    color: var(--gray);
     font-weight: bold
 }
 
 .hljs-number, .hljs-literal, .hljs-variable, .hljs-template-variable, .hljs-tag .hljs-attr {
-    color: #008080
+    color: var(--cyan)
 }
 
 .hljs-string, .hljs-doctag {
-    color: #d14
+    color: var(--red)
 }
 
 .hljs-title, .hljs-section, .hljs-selector-id {
-    color: #900;
+    color:var(--red);
     font-weight: bold
 }
 
@@ -248,29 +258,29 @@ pre {
 }
 
 .hljs-type, .hljs-class .hljs-title {
-    color: #458;
+    color: var(--blue);
     font-weight: bold
 }
 
 .hljs-tag, .hljs-name, .hljs-attribute {
-    color: #000080;
+    color: var(--darkblue);
     font-weight: normal
 }
 
 .hljs-regexp, .hljs-link {
-    color: #009926
+    color: var(--green)
 }
 
 .hljs-symbol, .hljs-bullet {
-    color: #990073
+    color: var(--magenta)
 }
 
 .hljs-built_in, .hljs-builtin-name {
-    color: #0086b3
+    color: var(--cyan)
 }
 
 .hljs-meta {
-    color: #999;
+    color: var(--lightgray);
     font-weight: bold
 }
 
