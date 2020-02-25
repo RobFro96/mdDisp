@@ -113,6 +113,14 @@ div.solution {
     display: none;
 }
 
+ul {
+    margin-top: 0;
+}
+
+p + ul {
+    margin-top: -1em;
+}
+
 p:last-child {
     margin-bottom: 0 !important;
 }
