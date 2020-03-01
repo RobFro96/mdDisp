@@ -1,0 +1,22 @@
+{
+    "folders": [
+        {
+            "name": "Testverzeichnis",
+            "path": "test/",
+            "options": {
+                "author": "Robert Fromm",
+                "pagewidth": "600pt"
+            },
+            "users": [
+                "rob"
+            ]
+        },
+        {
+            "name": "Testverzeichnis2",
+            "path": "test2/",
+            "users": [
+                "rob"
+            ]
+        }
+    ]
+}

@@ -4,7 +4,6 @@ const markdown_it = require("markdown-it");
 const markdown_it_mathjax = require('markdown-it-mathjax');
 const markdown_it_container = require('markdown-it-container');
 const Util = require("./util");
-const HtmlRenderer = require("./html-renderer");
 const DomRenderer = require("./dom-renderer");
 
 
@@ -12,23 +11,22 @@ const fs = require("fs");
 const hljs = require('highlight.js');
 const default_options = require("./templates/default-options.json")
 
-var Renderer = function (filename, destination) {
-    this.filename = filename;
-    this.destination = destination;
+var Renderer = function (mdFile, previewFile) {
+    this.mdFile = mdFile;
+    this.previewFile = previewFile;
 }
 
 Renderer.prototype.render = function () {
     try {
-        this.data = fs.readFileSync(this.filename, "utf8");
-        let firstLine = this.data.split("\n", 1)[0];
+        this.mdContent = fs.readFileSync(this.mdFile, "utf8");
+        let firstLine = this.mdContent.split("\n", 1)[0];
 
         if (!firstLine.startsWith(OPTION_HEADER)) {
             this.options = default_options;
-            return 0;
         }
 
         let start = this.parseOptions(firstLine);
-        this.data = this.data.substring(start);
+        this.mdContent = this.mdContent.substring(start);
 
         // Einstellungen
         this.md = markdown_it({
@@ -52,19 +50,17 @@ Renderer.prototype.render = function () {
         this.enableMathJax();
         this.enableContainer();
         this.enableSpoiler();
-        this.enableLabel();
 
-        let bodyHtml = this.md.render(this.data);
-        let fullHtml = new HtmlRenderer(this.options).render(bodyHtml);
-        let result = new DomRenderer(this.options).render(fullHtml);
+        let html = this.md.render(this.mdContent);
+        html = `<div id="md">${html}</div>`
+        let result = new DomRenderer(this.options).render(html);
 
-        fs.writeFileSync(this.destination, result, "utf8");
+        fs.writeFileSync(this.previewFile, result, "utf8");
     } catch (e) {
-        console.error(e);
-        return 0;
+        return e.stack;
     }
 
-    return 1;
+    return null;
 }
 
 Renderer.prototype.parseOptions = function (firstLine) {
@@ -106,27 +102,6 @@ Renderer.prototype.enableSpoiler = function () {
             } else {
                 // closing tag
                 return '</details>\n';
-            }
-        }.bind(this)
-    });
-}
-
-Renderer.prototype.enableLabel = function () {
-    this.md.use(markdown_it_container, "label", {
-        validate: function (params) {
-            return params.trim().match(/^label\s+(.*)$/);
-        },
-
-        render: function (tokens, idx) {
-            var m = tokens[idx].info.trim().match(/^label\s+(.*)$/);
-
-            if (tokens[idx].nesting === 1) {
-                // opening tag
-                return '<div class="label">' + this.md.utils.escapeHtml(m[1]) + '\n';
-
-            } else {
-                // closing tag
-                return '</div>\n';
             }
         }.bind(this)
     });

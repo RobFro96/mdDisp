@@ -52,7 +52,7 @@ DomRenderer.prototype.render = function (fullHtml) {
 
     }.bind(this));
 
-    return dom.serialize();
+    return dom.window.document.body.innerHTML;
 }
 
 DomRenderer.prototype.addTitle = function ($) {
