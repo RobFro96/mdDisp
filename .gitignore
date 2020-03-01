@@ -1,4 +1,6 @@
-test/
+test/**
+!test/test.md
+test2/
 config.json
 
 # Logs
