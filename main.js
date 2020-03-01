@@ -54,7 +54,7 @@ Main.prototype.updateConfig = function () {
 }
 
 Main.prototype.updateFile = function (path) {
-    let htmlFilename = path.substring(0, path.length - 2) + "html";
+    let htmlFilename = path.substring(0, path.length - 2) + "md.html";
 
     if (fs.existsSync(htmlFilename)) {
         let mdStats = fs.statSync(path);
