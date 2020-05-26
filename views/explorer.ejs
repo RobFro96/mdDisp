@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="de">
+
+<head>
+    <%- include("header", {title: "mdDisp - Login"}) %>
+    <script src="/explorer.js"></script>
+</head>
+
+<body>
+
+    <div class="container my-4">
+
+        <%- include("flash") %>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <h4 class="card-title col-md-4">Explorer</h4>
+                    <div class="card-title col-md-4"><%= location %></div>
+                    <div class="card-title col-md-4">
+                        <form action="/logout?_method=DELETE" method="POST">
+                            Logged in as <%= user %>
+                            <button class="ml-4 btn btn-secondary btn-sm" type="submit">Log Out</button>
+                        </form>
+                    </div>
+                </div>
+
+                <table class="table table-hover">
+                    <colgroup>
+                        <col class="col-md-8">
+                        <col class="col-md-2">
+                        <col class="col-md-2">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th class="th-lg">Name</th>
+                            <th>Size</th>
+                            <th>Last modified</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% structure.forEach(function(line) { %>
+                        <tr class="tr-clickable" data-href="<%- line.link %>" data-type="<%- line.type %>">
+                            <td>
+                                <i class="mr-1 fas <%= line.icon %>"></i>
+                                <%= line.name %>
+                            </td>
+                            <td><%= line.size %></td>
+                            <td><%= line.lastModified %></td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

@@ -67,6 +67,10 @@ DomRenderer.prototype.setPageWidth = function ($) {
     if (this.options["pagewidth"]) {
         $("#md").css("width", this.options["pagewidth"]);
     }
+
+    if (this.options["author"]) {
+        $("#md").prepend($("<div>").css("display", "none").attr("id", "author").text(this.options["author"]));
+    }
 }
 
 module.exports = DomRenderer;

@@ -1,8 +1,16 @@
 {
+    "port": 7768,
+    "session_secret": "mRetRnCjLj1uRc237oVe7lqXopqs3j8V",
+    "users": [
+        {
+            "name": "rob",
+            "password": "$2a$09$GY2QXqpHza11yoX2rzaeReDTVU2SOeiJmW8faSGexwB8uFIElUOJK"
+        }
+    ],
     "folders": [
         {
             "name": "Testverzeichnis",
-            "path": "test/",
+            "path": "C:\\Users\\rob\\MEGA\\Elektronik\\mdDisp\\test",
             "options": {
                 "author": "Robert Fromm",
                 "pagewidth": "600pt"
@@ -13,10 +21,48 @@
         },
         {
             "name": "Testverzeichnis2",
-            "path": "test2/",
+            "path": "C:\\Users\\rob\\MEGA\\Elektronik\\mdDisp\\test2",
+            "users": [
+                "rob"
+            ]
+        },
+        {
+            "name": "MRA",
+            "export_name": "#name.htm",
+            "path": "C:\\Users\\rob\\MEGA\\Lehre\\Vorlesung Mikrorechnerarchitekturen\\website",
             "users": [
                 "rob"
             ]
         }
-    ]
+    ],
+    "extensions": {
+        "folder": {
+            "icon": "fa-folder",
+            "type": "link"
+        },
+        "md": {
+            "icon": "fa-file-alt",
+            "type": "link"
+        },
+        "pdf": {
+            "icon": "fa-file-pdf",
+            "type": "link"
+        },
+        "xls": {
+            "icon": "fa-file-excel",
+            "type": "link"
+        },
+        "png": {
+            "icon": "fa-file-image",
+            "type": "image"
+        },
+        "jpg": {
+            "icon": "fa-file-image",
+            "type": "image"
+        },
+        "svg": {
+            "icon": "fa-file-image",
+            "type": "image"
+        }
+    }
 }

@@ -9,11 +9,12 @@ const DomRenderer = require("./dom-renderer");
 
 const fs = require("fs");
 const hljs = require('highlight.js');
-const default_options = require("./templates/default-options.json")
+// const default_options = require("./templates/default-options.json")
 
-var Renderer = function (mdFile, previewFile) {
+var Renderer = function (mdFile, previewFile, default_options) {
     this.mdFile = mdFile;
     this.previewFile = previewFile;
+    this.default_options = default_options;
 }
 
 Renderer.prototype.render = function () {
@@ -22,7 +23,7 @@ Renderer.prototype.render = function () {
         let firstLine = this.mdContent.split("\n", 1)[0];
 
         if (!firstLine.startsWith(OPTION_HEADER)) {
-            this.options = default_options;
+            this.options = this.default_options;
         }
 
         let start = this.parseOptions(firstLine);
@@ -67,12 +68,12 @@ Renderer.prototype.parseOptions = function (firstLine) {
     json = Util.fixJson(firstLine.substring(OPTION_HEADER.length).trim("\r"));
 
     if (json == null) {
-        this.options = default_options;
-        this.data = "<p style='color: red; font-weight: bold;'>[Error in header]</p>\n" + this.data.substring(firstLine.length);
+        this.options = this.default_options;
+        this.mdContent = "<p style='color: red; font-weight: bold;'>[Error in header]</p>\n" + this.mdContent.substring(firstLine.length);
         return 0;
     }
 
-    this.options = Object.assign(Object.assign({}, default_options), json);
+    this.options = Object.assign(this.default_options, json);
     return firstLine.length;
 }
 
