@@ -56,7 +56,7 @@ Renderer.prototype.render = function () {
         html = `<div id="md">${html}</div>`
         let result = new DomRenderer(this.options).render(html);
 
-        fs.writeFileSync(this.previewFile, result, "utf8");
+        fs.writeFileSync(this.previewFile, JSON.stringify(result), "utf8");
     } catch (e) {
         return e.stack;
     }

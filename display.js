@@ -1,101 +1,156 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
-const passport = require('passport');
-const flash = require('express-flash');
-const session = require('express-session');
-const methodOverride = require('method-override');
-const LocalStrategy = require('passport-local').Strategy
+const path = require('path');
+const fs = require('fs');
 
-var Display = function (config, files) {
+var Display = function (config, folders) {
     this.config = config;
-    this.files = files;
-
-    passport.use(new LocalStrategy({ usernameField: 'name' }, this.authenticateUser.bind(this)));
-    passport.serializeUser((user, done) => done(null, user.name));
-    passport.deserializeUser((id, done) => {
-        let user = this.config.get("users").value().find(user => user.name === id);
-        return done(null, user)
-    });
+    this.folders = folders;
 
     this.app = express();
     this.app.set('view-engine', 'ejs');
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(express.static('public'));
-    this.app.use(flash());
-    this.app.use(session({
-        secret: this.config.get("session_secret").value(),
-        resave: false,
-        saveUninitialized: false
-    }));
 
-    this.app.use(passport.initialize());
-    this.app.use(passport.session());
-    this.app.use(methodOverride('_method'));
-
-    this.app.get('/', checkAuthenticated, this.files.routeRoot.bind(this.files));
-    this.app.get('/files/:folder', checkAuthenticated, this.files.routeFiles.bind(this.files));
-    this.app.get('/files/:folder/:path(*)', checkAuthenticated, this.files.routeFiles.bind(this.files));
-    this.app.get('/file/:folder/:path(*)', checkAuthenticated, this.files.routeFile.bind(this.files));
-
-    this.app.get('/login', checkNotAuthenticated, (req, res) => {
-        res.render('login.ejs');
-    });
-
-    this.app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-        successRedirect: '/',
-        failureRedirect: '/login',
-        failureFlash: true
-    }));
-
-    this.app.delete('/logout', (req, res) => {
-        req.logOut()
-        res.redirect('/login')
-    });
+    this.app.get('/', this.routeRoot.bind(this));
+    this.app.get('/files/:folder', this.routeFiles.bind(this));
+    this.app.get('/files/:folder/:path(*)', this.routeFiles.bind(this));
+    this.app.get('/file/:folder/:path(*)', this.routeFile.bind(this));
 
     // Handle 404
     this.app.use(function (req, res) {
         res.status(404).send('404: Page not Found @RF');
     });
 
-    // // Handle 500
-    // this.app.use(function (error, req, res, next) {
-    //     res.status(500).send('500: Internal Server Error @RF');
-    // });
-
-    this.app.listen(this.config.get("port").value());
-
+    this.app.listen(this.config.get("web_port").value());
+    console.log(`Listining on port ${this.config.get("web_port").value()}.`)
 }
 
-Display.prototype.authenticateUser = async function (name, password, done) {
-    let user = this.config.get("users").value().find(user => user.name === name);
-    if (user == null) {
-        return done(null, false, { message: "login failed." });
-    }
+Display.prototype.routeRoot = function (req, res) {
+    let data = {};
+    data.location = "Overview";
 
-    try {
-        if (await bcrypt.compare(password, user.password)) {
-            return done(null, user);
-        } else {
-            return done(null, false, { message: "login failed." });
-        }
-    } catch (e) {
-        return done(e)
+    let structure = []
+    for (folderName of this.folders.getNames()) {
+        structure.push({
+            icon: this.config.get("filebrowser_extensions.folder.icon").value(),
+            name: folderName,
+            size: " ",
+            lastModified: " ",
+            link: "/files/" + folderName,
+            type: "link"
+        });
     }
+    data.structure = structure.sort((a, b) => a.name.localeCompare(b.name));
+
+    res.render('explorer.ejs', data);
 }
 
-let checkAuthenticated = function (req, res, next) {
-    if (req.isAuthenticated()) {
+Display.prototype.routeFiles = function (req, res, next) {
+    let data = {};
+
+    let folder = req.params.folder;
+    let subPath = req.params.path || "";
+
+    if (!this.folders.folderExists(folder)) {
         return next();
     }
-    res.redirect('/login');
-};
 
+    data.location = folder + "/";
+    if (subPath) data.location += subPath + "/";
 
-let checkNotAuthenticated = function (req, res, next) {
-    if (req.isAuthenticated()) {
-        return res.redirect('/');
+    let currentPath = path.join(this.folders.getFolderPath(folder), subPath);
+
+    fs.readdir(currentPath, function (err, items) {
+        if (err) {
+            return next;
+        }
+
+        let structure = [];
+
+        for (item of items) {
+            let extension = path.parse(item).ext.substring(1);
+            let file = path.join(currentPath, item);
+            let stats = fs.lstatSync(file);
+
+            if (stats.isDirectory()) {
+                structure.push({
+                    icon: this.config.get("filebrowser_extensions.folder.icon").value(),
+                    name: item,
+                    size: " ",
+                    lastModified: " ",
+                    link: "/" + path.join("files", folder, subPath, item).replace(/\\/g, "/"),
+                    type: "link",
+                    sortName: "a" + item
+                });
+            } else if (extension in this.config.get("filebrowser_extensions").value()) {
+                let extensionObj = this.config.get("filebrowser_extensions." + extension).value();
+                structure.push({
+                    icon: extensionObj.icon,
+                    name: item,
+                    size: Math.ceil(stats.size / 1024.) + " KB",
+                    lastModified: this.formatTime(stats.ctime),
+                    link: "/" + path.join("file", folder, subPath, item).replace(/\\/g, "/"),
+                    type: extensionObj.type,
+                    sortName: "b" + item
+                });
+            }
+        }
+
+        data.structure = structure.sort((a, b) => a.sortName.localeCompare(b.sortName, undefined, { numeric: true }));
+        res.render('explorer.ejs', data);
+    }.bind(this));
+}
+
+Display.prototype.routeFile = function (req, res, next) {
+    let folder = req.params.folder;
+    let subPath = req.params.path || "";
+
+    if (!this.folders.folderExists(folder)) {
+        return next();
     }
-    next();
+
+
+    let file = path.join(this.folders.getFolderPath(folder), subPath);
+    let extension = path.parse(file).ext
+
+    // Normale Datei
+    if (extension != ".md") {
+        return res.sendFile(file, { dotfiles: 'allow' }, function (err) {
+            if (err) {
+                return next();
+            }
+        });
+    }
+
+    // Markdown
+    let previewFile = this.folders.getPreviewFile(folder, file);
+
+    fs.readFile(previewFile, function (err, content) {
+        if (err) {
+            return next();
+        }
+
+        let json;
+        try {
+            json = JSON.parse(content);
+        } catch {
+            return next();
+        }
+
+        let data = {};
+        data.location = folder + "/" + subPath;
+        data.content = json.html;
+
+        res.render("preview.ejs", data);
+    }.bind(this));
+}
+
+Display.prototype.formatTime = function (time) {
+    if (new Date().toLocaleDateString() == time.toLocaleDateString) {
+        return time.toLocaleTimeString();
+    } else {
+        return time.getDate() + "." + (time.getMonth() + 1) + "." + time.getFullYear();
+    }
 }
 
 module.exports = Display;

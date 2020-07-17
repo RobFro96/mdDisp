@@ -1,41 +1,12 @@
 {
-    "port": 7768,
-    "session_secret": "mRetRnCjLj1uRc237oVe7lqXopqs3j8V",
-    "users": [
-        {
-            "name": "rob",
-            "password": "$2a$09$GY2QXqpHza11yoX2rzaeReDTVU2SOeiJmW8faSGexwB8uFIElUOJK"
-        }
-    ],
-    "folders": [
-        {
-            "name": "Testverzeichnis",
-            "path": "C:\\Users\\rob\\MEGA\\Elektronik\\mdDisp\\test",
-            "options": {
-                "author": "Robert Fromm",
-                "pagewidth": "600pt"
-            },
-            "users": [
-                "rob"
-            ]
-        },
-        {
-            "name": "Testverzeichnis2",
-            "path": "C:\\Users\\rob\\MEGA\\Elektronik\\mdDisp\\test2",
-            "users": [
-                "rob"
-            ]
-        },
-        {
-            "name": "MRA",
-            "export_name": "#name.htm",
-            "path": "C:\\Users\\rob\\MEGA\\Lehre\\Vorlesung Mikrorechnerarchitekturen\\website",
-            "users": [
-                "rob"
-            ]
-        }
-    ],
-    "extensions": {
+    "web_port": 7768,
+    "folders": {
+        "Testverzeichnis": "C:\\Users\\rob\\MEGA\\Elektronik\\mdDisp\\test",
+        "Testverzeichnis2": "C:\\Users\\rob\\MEGA\\Elektronik\\mdDisp\\test2",
+        "MRA": "C:\\Users\\rob\\MEGA\\Lehre\\Vorlesung Mikrorechnerarchitekturen\\website"
+    },
+    "preview_json": ".#name.md.json",
+    "filebrowser_extensions": {
         "folder": {
             "icon": "fa-folder",
             "type": "link"

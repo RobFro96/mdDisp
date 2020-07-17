@@ -52,7 +52,16 @@ DomRenderer.prototype.render = function (fullHtml) {
 
     }.bind(this));
 
-    return dom.window.document.body.innerHTML;
+    let html = dom.window.document.body.innerHTML;
+
+    let json = {
+        html: html,
+        title: this.options["title"],
+        pagewidth: this.options["pagewidth"],
+        author: this.options["author"]
+    }
+
+    return json;
 }
 
 DomRenderer.prototype.addTitle = function ($) {
@@ -66,10 +75,6 @@ DomRenderer.prototype.addTitle = function ($) {
 DomRenderer.prototype.setPageWidth = function ($) {
     if (this.options["pagewidth"]) {
         $("#md").css("width", this.options["pagewidth"]);
-    }
-
-    if (this.options["author"]) {
-        $("#md").prepend($("<div>").css("display", "none").attr("id", "author").text(this.options["author"]));
     }
 }
 

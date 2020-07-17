@@ -11,7 +11,6 @@ let Files = function (config, folders) {
 
 Files.prototype.routeRoot = function (req, res) {
     let data = {};
-    data.user = req.user.name;
     data.location = "Overview";
 
     let structure = []
@@ -32,7 +31,6 @@ Files.prototype.routeRoot = function (req, res) {
 
 Files.prototype.routeFiles = function (req, res, next) {
     let data = {};
-    data.user = req.user.name;
 
     let folder = req.params.folder;
     let subPath = req.params.path || "";

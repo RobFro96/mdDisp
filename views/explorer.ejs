@@ -15,14 +15,8 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    <h4 class="card-title col-md-4">Explorer</h4>
-                    <div class="card-title col-md-4"><%= location %></div>
-                    <div class="card-title col-md-4">
-                        <form action="/logout?_method=DELETE" method="POST">
-                            Logged in as <%= user %>
-                            <button class="ml-4 btn btn-secondary btn-sm" type="submit">Log Out</button>
-                        </form>
-                    </div>
+                    <h4 class="card-title col-lg-4">Explorer</h4>
+                    <div class="card-title col-lg-8"><%= location %></div>
                 </div>
 
                 <table class="table table-hover">
@@ -35,7 +29,7 @@
                         <tr>
                             <th class="th-lg">Name</th>
                             <th>Size</th>
-                            <th>Last modified</th>
+                            <th>Date</th>
                         </tr>
                     </thead>
                     <tbody>
