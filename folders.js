@@ -1,13 +1,14 @@
 const Folder = require("./folder");
 
 
-var Folders = function (config) {
+var Folders = function (config, autoRefresher) {
     this.config = config;
+    this.autoRefresher = autoRefresher;
     this.folders = {}
 
     for (let name in this.config.get("folders").value()) {
         let folderPath = this.config.get("folders").get(name).value();
-        this.folders[name] = new Folder(name, folderPath, config);
+        this.folders[name] = new Folder(name, folderPath, config, autoRefresher);
     }
 }
 

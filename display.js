@@ -2,9 +2,10 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 
-var Display = function (config, folders) {
+var Display = function (config, folders, autoRefresher) {
     this.config = config;
     this.folders = folders;
+    this.autoRefresher = autoRefresher;
 
     this.app = express();
     this.app.set('view-engine', 'ejs');
@@ -15,6 +16,7 @@ var Display = function (config, folders) {
     this.app.get('/files/:folder', this.routeFiles.bind(this));
     this.app.get('/files/:folder/:path(*)', this.routeFiles.bind(this));
     this.app.get('/file/:folder/:path(*)', this.routeFile.bind(this));
+    this.app.get('/refresher/:id', this.autoRefresher.route.bind(this.autoRefresher));
 
     // Handle 404
     this.app.use(function (req, res) {
@@ -27,6 +29,7 @@ var Display = function (config, folders) {
 
 Display.prototype.routeRoot = function (req, res) {
     let data = {};
+    data.title = "mdDisp - /";
     data.location = "Overview";
 
     let structure = []
@@ -57,6 +60,8 @@ Display.prototype.routeFiles = function (req, res, next) {
 
     data.location = folder + "/";
     if (subPath) data.location += subPath + "/";
+
+    data.title = "mdDisp - " + data.location;
 
     let currentPath = path.join(this.folders.getFolderPath(folder), subPath);
 
@@ -138,8 +143,13 @@ Display.prototype.routeFile = function (req, res, next) {
         }
 
         let data = {};
+        data.title = "mdDisp - " + json.title;
         data.location = folder + "/" + subPath;
         data.content = json.html;
+        data.toc = this.formatToc(json.toc);
+        data.author = json.author;
+        data.mathjax_macros = this.config.get("mathjax_macros").value().join("\n");
+        data.autoRefresherId = this.autoRefresher.getHash(file);
 
         res.render("preview.ejs", data);
     }.bind(this));
@@ -151,6 +161,34 @@ Display.prototype.formatTime = function (time) {
     } else {
         return time.getDate() + "." + (time.getMonth() + 1) + "." + time.getFullYear();
     }
+}
+
+Display.prototype.formatToc = function (tocJson) {
+    return this.formatTocLevel({
+        "text": "",
+        "numbers": "",
+        "children": tocJson,
+        "link": ""
+    });
+}
+
+Display.prototype.formatTocLevel = function (tocJson) {
+    let listElements = "";
+
+    for (let child of tocJson.children) {
+        listElements += `
+            <li>
+                ${this.formatTocLevel(child)}
+            </li>
+        `;
+    }
+
+    return `
+        <a href="#${tocJson.link}">${tocJson.text}</a>
+        <ol>
+            ${listElements}
+        </ol>
+    `;
 }
 
 module.exports = Display;

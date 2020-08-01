@@ -7,7 +7,7 @@ const FileSync = require('lowdb/adapters/FileSync');
 
 const Folders = require("./folders");
 const Display = require("./display");
-const Files = require("./files");
+const AutoRefresher = require("./auto-refresher")
 
 /**
  * Konstruktor von Main.
@@ -19,11 +19,11 @@ var Main = function () {
     this.config = low(new FileSync("config.json"));
     this.config.defaults(require("./default-config.json")).write();
 
+    this.autoRefresher = new AutoRefresher();
 
+    this.folders = new Folders(this.config, this.autoRefresher);
 
-    this.folders = new Folders(this.config);
-
-    this.display = new Display(this.config, this.folders);
+    this.display = new Display(this.config, this.folders, this.autoRefresher);
 }
 
 // Starten des Konstruktors

@@ -10,6 +10,10 @@ var LabelRenderer = function (options) {
     this.sectionNumbers = new Array(this.options["section_depth"]).fill(0);
     this.useChapter = this.options["chapter"] > 0;
 
+    this.toc = [];
+    this.tocLists = new Array(this.options["section_depth"]).fill(null);
+    this.tocLists[0] = this.toc;
+
     if (this.useChapter) {
         this.sectionNumbers[0] = this.options["chapter"] - 1;
     }
@@ -129,6 +133,16 @@ LabelRenderer.prototype.renderHeading = function ($, element) {
         text += this.sectionNumbers[i];
         id += this.sectionNumbers[i];
     }
+
+    let tocObj = {
+        "text": element.html(),
+        "numbers": text,
+        "link": id,
+        "children": []
+    };
+
+    this.tocLists[level].push(tocObj);
+    this.tocLists[level + 1] = tocObj.children;
 
     let span = $("<span>");
     span.text(text);

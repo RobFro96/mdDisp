@@ -33,6 +33,13 @@ function img_box(self) {
     idpopup_img_box.style["background-repeat"] = "no-repeat";
     idpopup_img_box.style["background-position"] = "center";
 
+    var close_func = function () {
+        idpopup_img_box.style.opacity = 0
+        idpopup_img_box.style.display = 'none'
+        idpopup_img_box.innerHTML = ''
+        document.body.style.overflow = 'visible'
+    }
+
     if (allow_hide_scroll_img_box == 'yes') {
         document.body.style.overflow = 'hidden'
     }
@@ -61,20 +68,27 @@ function img_box(self) {
                     idpopup_img_box.style.opacity = vopa_img_box
                     vopa_img_box -= speed_img_box
                 } else {
-                    idpopup_img_box.style.opacity = 0
                     clearInterval(idfadeout_img_box)
-                    idpopup_img_box.style.display = 'none'
-                    idpopup_img_box.innerHTML = ''
-                    document.body.style.overflow = 'visible'
                     vopa_img_box = 0
+                    close_func()
                 }
             }, 10)
         }
         else {
-            idpopup_img_box.style.opacity = 0
-            idpopup_img_box.style.display = 'none'
-            idpopup_img_box.innerHTML = ''
-            document.body.style.overflow = 'visible'
+            close_func()
+        }
+    }
+
+    document.onkeydown = function (evt) {
+        evt = evt || window.event;
+        var isEscape = false;
+        if ("key" in evt) {
+            isEscape = (evt.key === "Escape" || evt.key === "Esc");
+        } else {
+            isEscape = (evt.keyCode === 27);
+        }
+        if (isEscape) {
+            close_func()
         }
     }
 }

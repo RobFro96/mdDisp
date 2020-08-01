@@ -35,5 +35,9 @@
             "icon": "fa-file-image",
             "type": "image"
         }
-    }
+    },
+    "mathjax_macros": [
+        "$$\\def\\si#1{{\\,\\rm #1}}$$",
+        "$$\\def\\ped#1{_{\\rm #1}}$$"
+    ]
 }

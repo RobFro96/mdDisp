@@ -2,12 +2,24 @@
 <html lang="de">
 
 <head>
-    <%- include("header", {title: "mdDisp - Login"}) %>
-    <script src="/explorer.js"></script>
+    <%- include("header") %>
+    <link rel="stylesheet" type="text/css" href="/preview.css">
+    <link rel="stylesheet" type="text/css" href="/hljs-github.css">
+
+    <script src="/jquery-3.4.1.min.js"></script>
+    <script src="/mathjax-config.js"></script>
+    <script src="/auto-refresher.js"></script>
+
+    <script>
+        let autoRefresherId = "<%= autoRefresherId %>";
+    </script>
 </head>
 
 <body>
-
+    <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js"></script>
+    <div style="display: none;">
+        <%- mathjax_macros %>
+    </div>
     <div class="container my-4">
 
         <%- include("flash") %>
@@ -16,14 +28,17 @@
             <div class="card-body">
                 <div class="row">
                     <h4 class="card-title col-md-4">Preview</h4>
-                    <h4 class="card-title col-md-8"><%= location %></h4>
+                    <h4 class="card-title col-md-4"><%= location %></h4>
+                    <h4 class="card-title col-md-4"><%= author %></h4>
                 </div>
 
                 <hr>
 
-                <div id="md" style="width: 600pt;">
-                    <%- content %>
-                </div>
+                <%- toc %>
+
+                <hr>
+
+                <%- content %>
 
             </div>
         </div>

@@ -18,7 +18,7 @@
     "express-flash": "0.0.2",
     "express-session": "^1.17.0",
     "highlight.js": "^9.17.1",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.1",
     "jsdom": "^15.2.1",
     "lowdb": "^1.0.0",
     "markdown-it": "^10.0.0",
@@ -26,6 +26,7 @@
     "markdown-it-mathjax": "^2.0.0",
     "method-override": "^3.0.0",
     "passport": "^0.4.1",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "string-hash": "^1.1.3"
   }
 }

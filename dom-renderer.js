@@ -54,11 +54,18 @@ DomRenderer.prototype.render = function (fullHtml) {
 
     let html = dom.window.document.body.innerHTML;
 
+    // fix toc
+    let toc = labelRenderer.toc;
+    if (labelRenderer.useChapter) {
+        toc = toc[0].children;
+    }
+
     let json = {
         html: html,
         title: this.options["title"],
         pagewidth: this.options["pagewidth"],
-        author: this.options["author"]
+        author: this.options["author"],
+        toc: toc
     }
 
     return json;

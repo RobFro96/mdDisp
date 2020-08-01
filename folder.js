@@ -8,10 +8,11 @@ const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 const Renderer = require("./renderer")
 
-var Folder = function (name, folder, config) {
+var Folder = function (name, folder, config, autoRefresher) {
     this.name = name;
     this.path = folder;
     this.config = config;
+    this.autoRefresher = autoRefresher;
 
     let watchPath = path.join(this.path, "/**/*.md");
     this.watcher = chokidar.watch(watchPath, { persistent: true });
@@ -40,6 +41,8 @@ Folder.prototype.updateFile = function (mdfile) {
     console.log(`${this.folderConfig.get("name").value()}: ${mdfile} changed.`);
 
     this.generatePreview(mdfile);
+
+    this.autoRefresher.onUpdate(mdfile);
 }
 
 Folder.prototype.generatePreview = function (mdfile) {
