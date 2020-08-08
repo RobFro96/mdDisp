@@ -60,11 +60,24 @@ DomRenderer.prototype.render = function (fullHtml) {
         toc = toc[0].children;
     }
 
+    // create styles
+    let styles = ["default.css", "default-code.css"];
+    if (Array.isArray(styles)) {
+        for (let style of this.options["styles"]) {
+            styles.push(style);
+        }
+    }
+
+    if ("style" in this.options) {
+        styles.push(this.options["style"]);
+    }
+
     let json = {
         html: html,
         title: this.options["title"],
         pagewidth: this.options["pagewidth"],
         author: this.options["author"],
+        styles: styles,
         toc: toc
     }
 

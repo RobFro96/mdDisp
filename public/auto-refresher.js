@@ -10,8 +10,6 @@ function request() {
 }
 
 function update(res) {
-    console.log(res);
-
     if (res == null) {
         return;
     }

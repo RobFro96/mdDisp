@@ -6,10 +6,13 @@
 
 #md {
     margin: 0 auto;
-}
-
-#md {
-    margin: 0 auto;
+    margin-bottom: 5rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    text-align: left;
 }
 
 #md .md_img_div {
@@ -94,6 +97,13 @@
     border-left-color: #007bff;
 }
 
+#md hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
 #md table {
     margin-top: .25rem;
     margin-bottom: .25rem;
@@ -162,7 +172,7 @@
     text-decoration: underline;
 }
 
-#md code, kbd, pre, samp {
+#md code, #md kbd, #md pre, #md samp {
     font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     font-size: 1em;
 }

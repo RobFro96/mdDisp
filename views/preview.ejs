@@ -3,15 +3,18 @@
 
 <head>
     <%- include("header") %>
-    <link rel="stylesheet" type="text/css" href="/preview.css">
-    <link rel="stylesheet" type="text/css" href="/hljs-github.css">
 
-    <script src="/jquery-3.4.1.min.js"></script>
+    <% styles.forEach(function(style) { %>
+    <link rel="stylesheet" type="text/css" href="/styles/<%- style %>">
+    <% }); %>
+
     <script src="/mathjax-config.js"></script>
     <script src="/auto-refresher.js"></script>
+    <script src="/preview.js"></script>
 
     <script>
         let autoRefresherId = "<%= autoRefresherId %>";
+        let renderLink = "<%= renderLink %>";
     </script>
 </head>
 
@@ -29,21 +32,27 @@
                 <div class="row">
                     <h4 class="card-title col-md-4">Preview</h4>
                     <h4 class="card-title col-md-4"><%= location %></h4>
-                    <h4 class="card-title col-md-4"><%= author %></h4>
+                    <h4 class="card-title col-md-3"><%= author %></h4>
+                    <div class="card-title col-md-1">
+                        <button id="aio-render" type="button" class="btn btn-secondary">
+                            <i class='fas fa-file-archive'></i>
+                        </button>
+                    </div>
                 </div>
 
                 <hr>
-
                 <%- toc %>
-
-                <hr>
-
-                <%- content %>
-
             </div>
         </div>
 
     </div>
+    <% if (pagewidth != 0 ) { %>
+    <%- content %>
+    <% } else { %>
+    <div class="container">
+        <%- content %>
+    </div>
+    <% } %>
 </body>
 
 </html>

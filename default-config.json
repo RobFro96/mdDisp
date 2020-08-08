@@ -1,10 +1,6 @@
 {
     "web_port": 7768,
-    "folders": {
-        "Testverzeichnis": "C:\\Users\\rob\\MEGA\\Elektronik\\mdDisp\\test",
-        "Testverzeichnis2": "C:\\Users\\rob\\MEGA\\Elektronik\\mdDisp\\test2",
-        "MRA": "C:\\Users\\rob\\MEGA\\Lehre\\Vorlesung Mikrorechnerarchitekturen\\website"
-    },
+    "folders": {},
     "preview_json": ".#name.md.json",
     "filebrowser_extensions": {
         "folder": {

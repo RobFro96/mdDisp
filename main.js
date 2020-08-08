@@ -1,6 +1,5 @@
 const fs = require("fs");
-const express = require('express');
-const Http = require('http');
+const chokidar = require("chokidar");
 
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
@@ -15,14 +14,28 @@ const AutoRefresher = require("./auto-refresher")
  */
 var Main = function () {
     // Datenbank
-    fs.unlinkSync("config.json");
     this.config = low(new FileSync("config.json"));
     this.config.defaults(require("./default-config.json")).write();
 
+    this.watcher = chokidar.watch("config.json", { persistent: true });
+    this.watcher.on("change", this.onConfigChanged.bind(this));
+
     this.autoRefresher = new AutoRefresher();
 
-    this.folders = new Folders(this.config, this.autoRefresher);
+    this.refresh();
+}
 
+Main.prototype.onConfigChanged = function () {
+    this.folders.closeAll();
+    this.display.close();
+    this.config = low(new FileSync("config.json"));
+    this.config.defaults(require("./default-config.json"));
+
+    this.refresh();
+}
+
+Main.prototype.refresh = function () {
+    this.folders = new Folders(this.config, this.autoRefresher);
     this.display = new Display(this.config, this.folders, this.autoRefresher);
 }
 

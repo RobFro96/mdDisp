@@ -1,3 +1,6 @@
 {
-    "options": {}
+    "options": {},
+    "aio-renderer-template": "template.html",
+    "aio-renderer-output": "#filename.md.html",
+    "aio-render-on-change": false
 }

@@ -28,4 +28,11 @@ Folders.prototype.getPreviewFile = function (folder, file) {
     return this.folders[folder].getPreviewFilename(file);
 }
 
+Folders.prototype.closeAll = function () {
+    for (let name in this.folders) {
+        let folder = this.folders[name];
+        folder.closeWatchers();
+    }
+}
+
 module.exports = Folders

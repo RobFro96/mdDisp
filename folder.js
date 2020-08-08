@@ -3,10 +3,11 @@ const fs = require("fs");
 const deepcopy = require("deepcopy");
 const default_options = require("./templates/default-options.json");
 const path = require('path');
-
 const low = require('lowdb');
+
 const FileSync = require('lowdb/adapters/FileSync');
 const Renderer = require("./renderer")
+const AioRender = require("./aio-renderer");
 
 var Folder = function (name, folder, config, autoRefresher) {
     this.name = name;
@@ -23,6 +24,22 @@ var Folder = function (name, folder, config, autoRefresher) {
     let configPath = path.join(this.path, ".mdconfig.json");
     this.folderConfig = low(new FileSync(configPath));
     this.folderConfig.defaults(require("./default-folder-config.json")).write();
+
+    this.config_watcher = chokidar.watch(path.join(this.path, ".mdconfig.json"), { persistent: true });
+    this.config_watcher.on("change", this.updateConfig.bind(this));
+}
+
+Folder.prototype.updateConfig = function () {
+    let configPath = path.join(this.path, ".mdconfig.json");
+    this.folderConfig = low(new FileSync(configPath));
+    this.folderConfig.defaults(require("./default-folder-config.json"));
+
+    console.log(`Updated config of folder ${this.name}.`);
+}
+
+Folder.prototype.closeWatchers = function () {
+    this.watcher.close();
+    this.config_watcher.close();
 }
 
 Folder.prototype.updateFile = function (mdfile) {
@@ -38,11 +55,19 @@ Folder.prototype.updateFile = function (mdfile) {
         }
     }
 
-    console.log(`${this.folderConfig.get("name").value()}: ${mdfile} changed.`);
+    console.log(`${this.name}: ${mdfile} changed.`);
 
     this.generatePreview(mdfile);
 
     this.autoRefresher.onUpdate(mdfile);
+
+    if (this.folderConfig.get("aio-render-on-change").value()) {
+        let renderer = new AioRender(this.config, this, mdfile);
+        let result = renderer.render();
+
+        if (result)
+            console.log(`AIO-Rendering ${file} returned ${result}.`)
+    }
 }
 
 Folder.prototype.generatePreview = function (mdfile) {

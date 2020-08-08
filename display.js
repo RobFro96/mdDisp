@@ -1,6 +1,9 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const AioRenderer = require("./aio-renderer");
+const AioRender = require('./aio-renderer');
+const Util = require("./util");
 
 var Display = function (config, folders, autoRefresher) {
     this.config = config;
@@ -12,10 +15,12 @@ var Display = function (config, folders, autoRefresher) {
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(express.static('public'));
 
+    this.app.use('/styles', express.static('styles'));
     this.app.get('/', this.routeRoot.bind(this));
     this.app.get('/files/:folder', this.routeFiles.bind(this));
     this.app.get('/files/:folder/:path(*)', this.routeFiles.bind(this));
     this.app.get('/file/:folder/:path(*)', this.routeFile.bind(this));
+    this.app.get('/render/:folder/:path(*)', this.routeAioRender.bind(this));
     this.app.get('/refresher/:id', this.autoRefresher.route.bind(this.autoRefresher));
 
     // Handle 404
@@ -23,8 +28,12 @@ var Display = function (config, folders, autoRefresher) {
         res.status(404).send('404: Page not Found @RF');
     });
 
-    this.app.listen(this.config.get("web_port").value());
+    this.server = this.app.listen(this.config.get("web_port").value());
     console.log(`Listining on port ${this.config.get("web_port").value()}.`)
+}
+
+Display.prototype.close = function () {
+    this.server.close();
 }
 
 Display.prototype.routeRoot = function (req, res) {
@@ -93,7 +102,7 @@ Display.prototype.routeFiles = function (req, res, next) {
                     icon: extensionObj.icon,
                     name: item,
                     size: Math.ceil(stats.size / 1024.) + " KB",
-                    lastModified: this.formatTime(stats.ctime),
+                    lastModified: Util.formatTime(stats.ctime),
                     link: "/" + path.join("file", folder, subPath, item).replace(/\\/g, "/"),
                     type: extensionObj.type,
                     sortName: "b" + item
@@ -146,49 +155,41 @@ Display.prototype.routeFile = function (req, res, next) {
         data.title = "mdDisp - " + json.title;
         data.location = folder + "/" + subPath;
         data.content = json.html;
-        data.toc = this.formatToc(json.toc);
+        data.toc = Util.formatToc(json.toc);
         data.author = json.author;
         data.mathjax_macros = this.config.get("mathjax_macros").value().join("\n");
         data.autoRefresherId = this.autoRefresher.getHash(file);
+        data.styles = json.styles || [];
+        data.renderLink = "/render/" + folder + "/" + subPath;
+        data.pagewidth = json.pagewidth != 0;
 
         res.render("preview.ejs", data);
     }.bind(this));
 }
 
-Display.prototype.formatTime = function (time) {
-    if (new Date().toLocaleDateString() == time.toLocaleDateString) {
-        return time.toLocaleTimeString();
-    } else {
-        return time.getDate() + "." + (time.getMonth() + 1) + "." + time.getFullYear();
-    }
-}
+Display.prototype.routeAioRender = function (req, res, next) {
+    let folder = req.params.folder;
+    let subPath = req.params.path || "";
 
-Display.prototype.formatToc = function (tocJson) {
-    return this.formatTocLevel({
-        "text": "",
-        "numbers": "",
-        "children": tocJson,
-        "link": ""
-    });
-}
-
-Display.prototype.formatTocLevel = function (tocJson) {
-    let listElements = "";
-
-    for (let child of tocJson.children) {
-        listElements += `
-            <li>
-                ${this.formatTocLevel(child)}
-            </li>
-        `;
+    if (!this.folders.folderExists(folder)) {
+        return next();
     }
 
-    return `
-        <a href="#${tocJson.link}">${tocJson.text}</a>
-        <ol>
-            ${listElements}
-        </ol>
-    `;
+
+    let file = path.join(this.folders.getFolderPath(folder), subPath);
+    let extension = path.parse(file).ext;
+
+    if (extension != ".md") {
+        return next();
+    }
+
+    let renderer = new AioRender(this.config, this.folders.folders[folder], file);
+    let result = renderer.render();
+
+    if (result)
+        console.log(`AIO-Rendering ${file} returned ${result}.`)
+
+    res.send({ "result": result });
 }
 
 module.exports = Display;
