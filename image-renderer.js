@@ -1,14 +1,36 @@
+/**
+ * mdDisp - Markdown Parser and Viewer
+ * @author Robert Fromm
+ * @data 14.08.2020
+ * 
+ * Server Side Javascript:
+ * Rendering the image in the markdown file. Using DOM manipulation to interpret and apply the
+ * attributes in the alt text of the image.
+ */
+
+/**
+ * Constructor.
+ * 
+ * @param {dict} options markdown parsing options
+ * @param {LabelRenderer} labelRenderer LabelRenderer for applying a image label
+ */
 var ImageRenderer = function (options, labelRenderer) {
     this.options = options;
     this.labelRenderer = labelRenderer;
 }
 
+/**
+ * Rendering an image.
+ * 
+ * @param {jquery} $ 
+ * @param {*} img jquery image tag
+ */
 ImageRenderer.prototype.render = function ($, img) {
-    // Alt auslesen
+    // read alt text
     json = Util.fixJson($(img).attr("alt"));
     if (!json) return;
 
-    // Wrap mit div
+    // Wrap with div
     let div = $("<div>");
     div.addClass("md_img_div");
     img.addClass("md_img");
@@ -19,10 +41,18 @@ ImageRenderer.prototype.render = function ($, img) {
     this.setWidth($, json, div, img);
     this.setCaption($, json, div, img);
 
-    // Modal
+    // set onclick function
     img.attr("onclick", "img_box(this)");
 }
 
+/**
+ * Setting the with of the image.
+ * 
+ * @param {jquery} $ 
+ * @param {dict} json parsed alt text
+ * @param {*} div surrounding div
+ * @param {*} img image tag
+ */
 ImageRenderer.prototype.setWidth = function ($, json, div, img) {
     if ("w" in json) {
         let w = json["w"];
@@ -38,6 +68,14 @@ ImageRenderer.prototype.setWidth = function ($, json, div, img) {
     }
 }
 
+/**
+ * Setting the caption and source text of the image.
+ * 
+ * @param {jquery} $ 
+ * @param {dict} json parsed alt text
+ * @param {*} div surrounding div
+ * @param {*} img image tag
+ */
 ImageRenderer.prototype.setCaption = function ($, json, div, img) {
     if (!("alt" in json)) {
         img.attr("alt", "");

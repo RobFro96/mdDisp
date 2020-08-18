@@ -1,8 +1,21 @@
+/**
+ * mdDisp - Markdown Parser and Viewer
+ * @author Robert Fromm
+ * @data 14.08.2020
+ * 
+ * Server Side Javascript:
+ * Utility function to be used in this program.
+ */
+
 Util = {};
 
+/**
+ * Converting and parsing relaxed json without colons around the key names.
+ * Code from: https://stackoverflow.com/questions/9637517/parsing-relaxed-json-without-eval
+ * 
+ * @param {string} string bad formatted json
+ */
 Util.fixJson = function (string) {
-    // von https://stackoverflow.com/questions/9637517/parsing-relaxed-json-without-eval
-
     try {
         let crappyJSON = "{" + string + "}";
         let fixedJSON = crappyJSON// Replace ":" with "@colon@" if it's between double-quotes
@@ -26,6 +39,12 @@ Util.fixJson = function (string) {
     }
 }
 
+/**
+ * Converting structured table of contents to a nested ordered list.
+ * Calling the function formatTocLevel recursively.
+ * 
+ * @param {dict} tocJson Toc created by LabelRenderer.
+ */
 Util.formatToc = function (tocJson) {
     return Util.formatTocLevel({
         "text": "",
@@ -35,6 +54,10 @@ Util.formatToc = function (tocJson) {
     });
 }
 
+/**
+ * Helper Function. Please call formatToc instead.
+ * @param {dict} tocJson Toc created by LabelRenderer
+ */
 Util.formatTocLevel = function (tocJson) {
     let listElements = "";
 
@@ -54,6 +77,11 @@ Util.formatTocLevel = function (tocJson) {
     `;
 }
 
+/**
+ * Javascript has no formatter for dates. This function returns the date in the Format T.M.Y.
+ * 
+ * @param {Date} time time to be formatted
+ */
 Util.formatTime = function (time) {
     if (new Date().toLocaleDateString() == time.toLocaleDateString) {
         return time.toLocaleTimeString();

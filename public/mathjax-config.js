@@ -1,3 +1,12 @@
+/**
+ * mdDisp - Markdown Parser and Viewer
+ * @author Robert Fromm
+ * @data 14.08.2020
+ * 
+ * Client Side Javascript:
+ * Config of MathJax - Display of LaTeX math code.
+ */
+
 window.MathJax = {
     "jax": ["input/TeX", "output/HTML-CSS"],
     "extensions": ["tex2jax.js"],

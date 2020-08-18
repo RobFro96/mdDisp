@@ -1,3 +1,12 @@
+/**
+ * mdDisp - Markdown Parser and Viewer
+ * @author Robert Fromm
+ * @data 14.08.2020
+ * 
+ * Server Side Javascript:
+ * Rendering the markdown file to html by using the package markdown-it
+ * Using DOM manipulation and JQuery to implement custom features.
+ */
 const OPTION_HEADER = "!mdDisp:";
 
 const markdown_it = require("markdown-it");
@@ -9,14 +18,27 @@ const DomRenderer = require("./dom-renderer");
 
 const fs = require("fs");
 const hljs = require('highlight.js');
-// const default_options = require("./templates/default-options.json")
 
+/**
+ * Constructor.
+ * 
+ * @param {string} mdFile path of markdown file
+ * @param {string} previewFile path of preview file
+ * @param {dict} default_options default settings of corresponding folder
+ */
 var Renderer = function (mdFile, previewFile, default_options) {
     this.mdFile = mdFile;
     this.previewFile = previewFile;
     this.default_options = default_options;
 }
 
+/**
+ * Rendering the markdown file.
+ * Reading the markdown settings in the first line.
+ * Using the markdown converter of the package markdown it.
+ * Using the DomRenderer for rendering the file with jquery.
+ * Saving the preview file.
+ */
 Renderer.prototype.render = function () {
     try {
         this.mdContent = fs.readFileSync(this.mdFile, "utf8");
@@ -64,6 +86,10 @@ Renderer.prototype.render = function () {
     return null;
 }
 
+/**
+ * Trying to read the first line of the markdown file. Reading special setting of the file.
+ * @param {string} firstLine first line of marksdown file.
+ */
 Renderer.prototype.parseOptions = function (firstLine) {
     json = Util.fixJson(firstLine.substring(OPTION_HEADER.length).trim("\r"));
 
@@ -77,16 +103,25 @@ Renderer.prototype.parseOptions = function (firstLine) {
     return firstLine.length;
 }
 
+/**
+ * Enabling the support of MathJax in the markdown-it parser.
+ */
 Renderer.prototype.enableMathJax = function () {
     this.md.use(markdown_it_mathjax());
 }
 
+/**
+ * Enabling the support of the custom containers specified in the options.
+ */
 Renderer.prototype.enableContainer = function () {
     for (container of this.options["simple-containers"]) {
         this.md.use(markdown_it_container, container);
     }
 }
 
+/**
+ * Enabling the support of a spoiler container.
+ */
 Renderer.prototype.enableSpoiler = function () {
     this.md.use(markdown_it_container, "spoiler", {
         validate: function (params) {

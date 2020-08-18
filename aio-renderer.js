@@ -1,14 +1,38 @@
-const { compareSync } = require("bcrypt");
+/**
+ * mdDisp - Markdown Parser and Viewer
+ * @author Robert Fromm
+ * @data 14.08.2020
+ * 
+ * Server Side Javascript:
+ * Exporting a All-In-One HTML. All styling and code files are included in the .html file.
+ * But images must be uploaded seperatly.
+ */
+
 const fs = require("fs");
 const path = require("path");
-const { json } = require("express");
 
+/**
+ * Constructor.
+ *  
+ * @param {lowd} config Global configuration as lowdb object.
+ * @param {Folder} folder Corresponding folder of file.
+ * @param {string} file path of the markdown file.
+ */
 var AioRender = function (config, folder, file) {
     this.config = config;
     this.folder = folder;
     this.file = file;
 }
 
+/**
+ * Function to render the all in one html file.
+ * Note: JSON preview file must be created first.
+ * 
+ * Reading the JSON preview file.
+ * Reading the template file
+ * Filling all placeholders in template file, reading files if needed.
+ * Writing output file
+ */
 AioRender.prototype.render = function () {
     let previewFile = this.folder.getPreviewFilename(this.file);
 
@@ -52,14 +76,25 @@ AioRender.prototype.render = function () {
         return "Error while reading the template file.\n" + e.stack;
     }
 
-    console.log(`AIO-Rendering of ${this.file} successfull.`);
+    console.log(`AIO-Rendering of ${this.file} successful.`);
     return "";
 }
 
+/**
+ * Replacing all placeholders with the value.
+ * 
+ * @param {string} placeholder placehold to be replaced with value
+ * @param {string} value value to be inserted
+ */
 AioRender.prototype.replace = function (placeholder, value) {
     this.html = this.html.replace(new RegExp(placeholder, "g"), value);
 }
 
+/**
+ * Replace the #pagewidth_tag.
+ * If pagewidth is set, add a style="..." tag.
+ * else remove placeholder.
+ */
 AioRender.prototype.replacePageWidth = function () {
     let tag = "";
 
@@ -70,6 +105,12 @@ AioRender.prototype.replacePageWidth = function () {
     this.replace("#pagewidth_tag", tag);
 }
 
+/**
+ * Replace the placeholder with the content of the file.
+ * 
+ * @param {string} placeholder placeholder
+ * @param {string} file path to file
+ */
 AioRender.prototype.replaceWithFile = function (placeholder, file) {
     try {
         let content = fs.readFileSync(file, "utf8");
@@ -79,6 +120,9 @@ AioRender.prototype.replaceWithFile = function (placeholder, file) {
     }
 }
 
+/**
+ * Replace the #style_sheets placeholder with the content of the specified stylesheets.
+ */
 AioRender.prototype.replaceStylesheets = function () {
     let css = "<style>";
 

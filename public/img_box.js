@@ -1,4 +1,14 @@
-// Quelle: https://www.cssscript.com/fullscreen-image-viewer-lightbox/
+/**
+ * mdDisp - Markdown Parser and Viewer
+ * @author Robert Fromm
+ * @data 14.08.2020
+ * 
+ * Client Side Javascript:
+ * Adapted from https://www.cssscript.com/fullscreen-image-viewer-lightbox/
+ * By calling the function img_box a image is opened in fullscreen.
+ * Using the CSS background function to stretch smaller images automatically to fullscreen.
+ */
+
 var bg_color_img_box = 'rgba(255, 255, 255, 0.9)'
 var allow_hide_scroll_img_box = 'yes'
 var use_fade_inout_img_box = 'yes'

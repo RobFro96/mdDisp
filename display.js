@@ -1,10 +1,27 @@
+/**
+ * mdDisp - Markdown Parser and Viewer
+ * @author Robert Fromm
+ * @data 14.08.2020
+ * 
+ * Server Side Javascript:
+ * Display class for viewing the explorer and markdown preview.
+ * Creating an express server. Port is specified in the config.
+ */
+
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const AioRenderer = require("./aio-renderer");
-const AioRender = require('./aio-renderer');
 const Util = require("./util");
 
+/**
+ * Constructor.
+ * Connecting all endpoint routing functions. Starting the express.js server.
+ * 
+ * @param {lowdb} config global config as lowdb object
+ * @param {Folders} folders folders of installation
+ * @param {AutoRefresher} autoRefresher autorefresher of installation
+ */
 var Display = function (config, folders, autoRefresher) {
     this.config = config;
     this.folders = folders;
@@ -32,10 +49,19 @@ var Display = function (config, folders, autoRefresher) {
     console.log(`Listining on port ${this.config.get("web_port").value()}.`)
 }
 
+/**
+ * Close the server.
+ */
 Display.prototype.close = function () {
     this.server.close();
 }
 
+/**
+ * Default endpoint. Rendering explorer with an overview of all folders.
+ * 
+ * @param {*} req request
+ * @param {*} res response
+ */
 Display.prototype.routeRoot = function (req, res) {
     let data = {};
     data.title = "mdDisp - /";
@@ -57,6 +83,13 @@ Display.prototype.routeRoot = function (req, res) {
     res.render('explorer.ejs', data);
 }
 
+/**
+ * Rendering the explorer with an specified folder.
+ * 
+ * @param {*} req request
+ * @param {*} res response
+ * @param {*} next next
+ */
 Display.prototype.routeFiles = function (req, res, next) {
     let data = {};
 
@@ -115,6 +148,13 @@ Display.prototype.routeFiles = function (req, res, next) {
     }.bind(this));
 }
 
+/**
+ * Sending a file, or showing the preview of a markdown file.
+ * 
+ * @param {*} req request
+ * @param {*} res response
+ * @param {*} next next
+ */
 Display.prototype.routeFile = function (req, res, next) {
     let folder = req.params.folder;
     let subPath = req.params.path || "";
@@ -127,7 +167,7 @@ Display.prototype.routeFile = function (req, res, next) {
     let file = path.join(this.folders.getFolderPath(folder), subPath);
     let extension = path.parse(file).ext
 
-    // Normale Datei
+    // normal file
     if (extension != ".md") {
         return res.sendFile(file, { dotfiles: 'allow' }, function (err) {
             if (err) {
@@ -136,7 +176,7 @@ Display.prototype.routeFile = function (req, res, next) {
         });
     }
 
-    // Markdown
+    // markdown
     let previewFile = this.folders.getPreviewFile(folder, file);
 
     fs.readFile(previewFile, function (err, content) {
@@ -167,6 +207,14 @@ Display.prototype.routeFile = function (req, res, next) {
     }.bind(this));
 }
 
+/**
+ * Endpoint for creating the Aio-File.
+ * Checking folder and file path, starting the rendering, returning an error code.
+ * 
+ * @param {*} req request
+ * @param {*} res response
+ * @param {*} next next
+ */
 Display.prototype.routeAioRender = function (req, res, next) {
     let folder = req.params.folder;
     let subPath = req.params.path || "";
@@ -183,7 +231,7 @@ Display.prototype.routeAioRender = function (req, res, next) {
         return next();
     }
 
-    let renderer = new AioRender(this.config, this.folders.folders[folder], file);
+    let renderer = new AioRenderer(this.config, this.folders.folders[folder], file);
     let result = renderer.render();
 
     if (result)

@@ -1,3 +1,17 @@
+/**
+ * mdDisp - Markdown Parser and Viewer
+ * @author Robert Fromm
+ * @data 14.08.2020
+ * 
+ * Server Side Javascript:
+ * Rendering the Labels and References by using DOM manipulation and labels.
+ */
+
+/**
+ * Constuctor.
+ * Setting up all labelNumbers and sectionNumbers to zero.
+ * @param {dict} options markdown parsing options
+ */
 var LabelRenderer = function (options) {
     this.options = options;
 
@@ -19,23 +33,12 @@ var LabelRenderer = function (options) {
     }
 }
 
-LabelRenderer.prototype.render = function ($, element) {
-    switch (element.html()[0]) {
-        case "?":
-            element = this.replaceTag($, element, "a");
-            element.addClass("ref");
-            this.renderRef($, element);
-            break;
-        case "!":
-            element = this.replaceTag($, element, "span");
-            element.addClass("label");
-            this.renderLabel($, element);
-            break;
-        default:
-            break;
-    }
-}
-
+/**
+ * Finding out label type.
+ * Creating the id for reference.
+ * @param {jquery} $
+ * @param {*} element jquery element containing a label.
+ */
 LabelRenderer.prototype.renderLabel = function ($, element) {
     let innerText = element.text();
     if (innerText[0] != "!")
@@ -83,6 +86,12 @@ LabelRenderer.prototype.renderLabel = function ($, element) {
     return element;
 }
 
+/**
+ * Searching for label in Database.
+ * Refering to label, adding a hyperlink.
+ * @param {jquery} $ 
+ * @param {*} element jquery element contain a label
+ */
 LabelRenderer.prototype.renderRef = function ($, element) {
     let innerText = element.text();
     if (innerText[0] != "?")
@@ -102,6 +111,12 @@ LabelRenderer.prototype.renderRef = function ($, element) {
     element.attr("href", "#" + label);
 }
 
+/**
+ * Adding numbering to heading.
+ * Adding entry to table of contents.
+ * @param {jquery} $ 
+ * @param {*} element jquery tag of heading
+ */
 LabelRenderer.prototype.renderHeading = function ($, element) {
     if (!this.options["autolabel_heading"])
         return;
@@ -152,6 +167,13 @@ LabelRenderer.prototype.renderHeading = function ($, element) {
     element.attr("id", id);
 }
 
+/**
+ * Replacing the html tag of the given element.
+ * 
+ * @param {jquery} $ 
+ * @param {*} element element
+ * @param {string} tag new tag
+ */
 LabelRenderer.prototype.replaceTag = function ($, element, tag) {
     let newElement = $("<" + tag + ">" + element.html() + "</" + tag + ">");
     element.replaceWith(newElement);
