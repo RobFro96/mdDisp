@@ -69,7 +69,7 @@ AioRender.prototype.render = function () {
         let outputFilename = this.folder.folderConfig.get("aio-renderer-output").value()
             .replace("#filename", filename);
 
-        let outputPath = path.join(this.folder.path, outputFilename);
+        let outputPath = path.join(path.parse(this.file).dir, outputFilename);
 
         fs.writeFileSync(outputPath, this.html, { encoding: 'utf8' });
     } catch (e) {
