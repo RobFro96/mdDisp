@@ -11,6 +11,8 @@ const OPTION_HEADER = "!mdDisp:";
 
 const markdown_it = require("markdown-it");
 const markdown_it_mathjax = require('markdown-it-mathjax');
+const markdown_it_sub = require('markdown-it-sub');
+const markdown_it_sup = require('markdown-it-sup');
 const markdown_it_container = require('markdown-it-container');
 const Util = require("./util");
 const DomRenderer = require("./dom-renderer");
@@ -69,6 +71,9 @@ Renderer.prototype.render = function () {
                 return ''; // use external default escaping
             }
         });
+
+        this.md.use(markdown_it_sub);
+        this.md.use(markdown_it_sup);
 
         this.enableMathJax();
         this.enableContainer();

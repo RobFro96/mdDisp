@@ -4,18 +4,18 @@
 <head>
     <%- include("header") %>
 
-    <% styles.forEach(function(style) { %>
-    <link rel="stylesheet" type="text/css" href="/styles/<%- style %>">
-    <% }); %>
+        <% styles.forEach(function(style) { %>
+            <link rel="stylesheet" type="text/css" href="/styles/<%- style %>">
+            <% }); %>
 
-    <script src="/mathjax-config.js"></script>
-    <script src="/auto-refresher.js"></script>
-    <script src="/preview.js"></script>
+                <script src="/mathjax-config.js"></script>
+                <script src="/auto-refresher.js"></script>
+                <script src="/preview.js"></script>
 
-    <script>
-        let autoRefresherId = "<%= autoRefresherId %>";
-        let renderLink = "<%= renderLink %>";
-    </script>
+                <script>
+                    let autoRefresherId = "<%= autoRefresherId %>";
+                    let renderLink = "<%= renderLink %>";
+                </script>
 </head>
 
 <body>
@@ -27,32 +27,36 @@
 
         <%- include("flash") %>
 
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <h4 class="card-title col-md-4">Preview</h4>
-                    <h4 class="card-title col-md-4"><%= location %></h4>
-                    <h4 class="card-title col-md-3"><%= author %></h4>
-                    <div class="card-title col-md-1">
-                        <button id="aio-render" type="button" class="btn btn-secondary">
-                            <i class='fas fa-file-archive'></i>
-                        </button>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <h4 class="card-title col-md-4">Preview</h4>
+                        <h4 class="card-title col-md-4">
+                            <%= location %>
+                        </h4>
+                        <h4 class="card-title col-md-3">
+                            <%= author %>
+                        </h4>
+                        <div class="card-title col-md-1">
+                            <button id="aio-render" type="button" class="btn btn-secondary">
+                                <i class='fa fa-file-archive'></i>
+                            </button>
+                        </div>
                     </div>
+
+                    <hr>
+                    <%- toc %>
                 </div>
-
-                <hr>
-                <%- toc %>
             </div>
-        </div>
 
     </div>
-    <% if (pagewidth != 0 ) { %>
-    <%- content %>
-    <% } else { %>
-    <div class="container">
+    <% if (pagewidth !=0 ) { %>
         <%- content %>
-    </div>
-    <% } %>
+            <% } else { %>
+                <div class="container">
+                    <%- content %>
+                </div>
+                <% } %>
 </body>
 
 </html>

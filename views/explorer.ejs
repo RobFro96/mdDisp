@@ -3,7 +3,7 @@
 
 <head>
     <%- include("header") %>
-    <script src="/explorer.js"></script>
+        <script src="/explorer.js"></script>
 </head>
 
 <body>
@@ -12,42 +12,48 @@
 
         <%- include("flash") %>
 
-        <div class="card">
-            <div class="card-body">
-                <div class="row">
-                    <h4 class="card-title col-lg-4">Explorer</h4>
-                    <div class="card-title col-lg-8"><%= location %></div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <h4 class="card-title col-lg-4">Explorer</h4>
+                        <div class="card-title col-lg-8">
+                            <%= location %>
+                        </div>
+                    </div>
+
+                    <table class="table table-hover">
+                        <colgroup>
+                            <col class="col-md-8">
+                            <col class="col-md-2">
+                            <col class="col-md-2">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th class="th-lg">Name</th>
+                                <th>Size</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% structure.forEach(function(line) { %>
+                                <tr class="tr-clickable" data-href="<%- line.link %>" data-type="<%- line.type %>">
+                                    <td>
+                                        <i class="mr-1 fas <%= line.icon %>"></i>
+                                        <%= line.name %>
+                                    </td>
+                                    <td>
+                                        <%= line.size %>
+                                    </td>
+                                    <td>
+                                        <%= line.lastModified %>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                        </tbody>
+                    </table>
+
                 </div>
-
-                <table class="table table-hover">
-                    <colgroup>
-                        <col class="col-md-8">
-                        <col class="col-md-2">
-                        <col class="col-md-2">
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th class="th-lg">Name</th>
-                            <th>Size</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% structure.forEach(function(line) { %>
-                        <tr class="tr-clickable" data-href="<%- line.link %>" data-type="<%- line.type %>">
-                            <td>
-                                <i class="mr-1 fas <%= line.icon %>"></i>
-                                <%= line.name %>
-                            </td>
-                            <td><%= line.size %></td>
-                            <td><%= line.lastModified %></td>
-                        </tr>
-                        <% }); %>
-                    </tbody>
-                </table>
-
             </div>
-        </div>
 
     </div>
 </body>
