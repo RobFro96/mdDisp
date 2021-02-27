@@ -54,17 +54,37 @@ ImageRenderer.prototype.render = function ($, img) {
  * @param {*} img image tag
  */
 ImageRenderer.prototype.setWidth = function ($, json, div, img) {
+    let width = "100%";
+
     if ("w" in json) {
         let w = json["w"];
 
         if (typeof w == "number") {
             w--;
-            div.css("width", w + "%");
+            width = w + "%";
         } else {
-            div.css("width", w);
+            width = w;
         }
+    }
+
+    if ("half" in json) {
+        div.css("width", width);
+        img.css("width", "100%");
     } else {
         div.css("width", "100%");
+        img.css("max-width", width)
+    }
+
+    if ("x" in json) {
+        let x = json["x"];
+        if (typeof x == "number") {
+            x = Math.round(1000.0 / x) / 1000;
+        }
+
+        img.attr("srcset", img.attr("src") + " " + x + "x");
+        img.removeAttr("src");
+    } else if (!"half" in json) {
+        img.css("width", width);
     }
 }
 
@@ -84,7 +104,7 @@ ImageRenderer.prototype.setCaption = function ($, json, div, img) {
 
     img.attr("alt", json["alt"]);
 
-    let caption = $("<span>");
+    let caption = $("<div>");
     caption.addClass("md_img_caption");
     caption.html(json["alt"]);
     div.append(caption);

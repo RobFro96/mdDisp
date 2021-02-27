@@ -35,7 +35,13 @@ window.onload = function () {
 }
 
 function img_box(self) {
-    var namepic_img_box = typeof self === 'string' ? self : self.src
+    var namepic_img_box = typeof self === 'string' ? self : (self.srcset || self.src)
+    if (namepic_img_box.slice(-1) == "x") {
+        namepic_img_box = namepic_img_box.split(" ").slice(0, -1).join(" ");
+    }
+    console.log(namepic_img_box);
+
+
     vopa_img_box = 0
 
     idpopup_img_box.style["background-size"] = "contain";

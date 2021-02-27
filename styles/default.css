@@ -20,7 +20,6 @@
 }
 
 #md .md_img {
-    width: 100%;
     cursor: pointer;
 }
 
@@ -137,23 +136,23 @@
 }
 
 #md h1 {
-    font-size: 2.5rem;
-}
-
-#md h2 {
     font-size: 2rem;
 }
 
-#md h3 {
-    font-size: 1.75rem;
-}
-
-#md h4 {
+#md h2 {
     font-size: 1.5rem;
 }
 
-#md h5 {
+#md h3 {
     font-size: 1.25rem;
+}
+
+#md h4 {
+    font-size: 1.2rem;
+}
+
+#md h5 {
+    font-size: 1.1rem;
 }
 
 #md h6 {

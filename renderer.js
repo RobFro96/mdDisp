@@ -13,6 +13,7 @@ const markdown_it = require("markdown-it");
 const markdown_it_mathjax = require('markdown-it-mathjax');
 const markdown_it_sub = require('markdown-it-sub');
 const markdown_it_sup = require('markdown-it-sup');
+const markdown_it_underline = require('markdown-it-underline');
 const markdown_it_container = require('markdown-it-container');
 const Util = require("./util");
 const DomRenderer = require("./dom-renderer");
@@ -74,6 +75,7 @@ Renderer.prototype.render = function () {
 
         this.md.use(markdown_it_sub);
         this.md.use(markdown_it_sup);
+        this.md.use(markdown_it_underline)
 
         this.enableMathJax();
         this.enableContainer();
