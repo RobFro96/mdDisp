@@ -39,7 +39,9 @@
                                 <tr class="tr-clickable" data-href="<%- line.link %>" data-type="<%- line.type %>">
                                     <td>
                                         <i class="mr-1 fas <%= line.icon %>"></i>
-                                        <%= line.name %>
+                                        <a style="color:#212529;text-decoration: none;" href="<%- line.link %>">
+                                            <%= line.name %>
+                                        </a>
                                     </td>
                                     <td>
                                         <%= line.size %>
