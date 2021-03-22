@@ -16,7 +16,8 @@
         "sec": "Abschnitt",
         "lst": "Quellcode",
         "task": "Aufgabe",
-		"eq": "Gleichung"
+        "eq": "Gleichung",
+        "tab": "Tabelle"
     },
     "section_depth": 3,
     "chapter": 0,
