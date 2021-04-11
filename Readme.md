@@ -49,7 +49,7 @@ __Markdown-Parser with additional Features and Live Display__
 - `"simple-containers"`: List of all possible container types
 - `"labels"`: Key-Value-Pair of all label types and their display text.
 - `"section_depth"`: Maximum depth of table of contents
-- `"chapter"`: Chapter of this file, 0: don't use chapter numbers of <h1> title
+- `"chapter"`: Chapter of this file, 0: don't use chapter numbers of `<h1>` title
 - `"autolabel_img"`: automatic labeling of images
 - `"autolabel_heading"`: automatic labeling of headings
 
