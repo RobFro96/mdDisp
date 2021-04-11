@@ -1,9 +1,9 @@
 {
-    "title": "Unbenanntes Dokument",
+    "title": "Unknown Document",
     "author": "",
     "styles": [],
     "pagewidth": 0,
-    "img_src_text": "Quelle: #SRC",
+    "img_src_text": "Source: #SRC",
     "simple-containers": [
         "task",
         "example",
@@ -12,12 +12,12 @@
         "no-print"
     ],
     "labels": {
-        "fig": "Abbildung",
-        "sec": "Abschnitt",
-        "lst": "Quellcode",
-        "task": "Aufgabe",
-        "eq": "Gleichung",
-        "tab": "Tabelle"
+        "fig": "Figure",
+        "sec": "Section",
+        "lst": "Listing",
+        "task": "Task",
+        "eq": "Equation",
+        "tab": "Table"
     },
     "section_depth": 3,
     "chapter": 0,
