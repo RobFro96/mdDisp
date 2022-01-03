@@ -110,7 +110,7 @@ Folder.prototype.updateFile = function (mdfile) {
 Folder.prototype.generatePreview = function (mdfile) {
     let previewFile = this.getPreviewFilename(mdfile);
 
-    let defaultOptions = Object.assign(deepcopy(default_options), this.folderConfig.options || {});
+    let defaultOptions = Object.assign(deepcopy(default_options), this.folderConfig.get("options").value() || {});
     let renderer = new Renderer(mdfile, previewFile, defaultOptions);
     let result = renderer.render();
     if (result) {
